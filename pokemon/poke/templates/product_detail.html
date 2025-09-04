@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="mb-4">Detalles de <span class="text-capitalize">{{ product.title }}</span></h1>
+            
+            <div class="card">
+                <div class="card-body">
+                    <img src="{{ product.image }}" alt="{{ product.title }}" class="img-fluid mb-3" style="max-width: 300px;">
+                    <h2 class="text-capitalize mb-3">{{ product.title }}</h2>
+                    <p class="h5"><strong>ID:</strong> {{ product.id }}</p>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <a href="{% url 'products' %}" class="btn btn-secondary btn-lg">Volver a la Lista</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

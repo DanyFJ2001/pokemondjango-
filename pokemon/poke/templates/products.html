@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="text-center mb-4">Lista de Pokémon</h1>
+    <p class="text-center text-muted">Página {{ current_page }} - Mostrando {{ products|length }} de 1302 Pokémon</p>
+    
+    <!-- Grid de tarjetas -->
+    <div class="row">
+        {% for product in products %}
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img 
+                        src="{{ product.image }}" 
+                        class="card-img-top" 
+                        alt="{{ product.title }}" 
+                        style="height: 200px; object-fit: contain; padding: 15px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);"
+                        onerror="this.src='https://via.placeholder.com/200x200?text=No+Image'"
+                    >
+                    <div class="card-body text-center d-flex flex-column">
+                        <h5 class="card-title text-capitalize fw-bold text-primary">{{ product.title }}</h5>
+                        <p class="card-text text-muted mb-2">ID: #{{ product.id|stringformat:"04d" }}</p>
+                        <a href="{% url 'pokemon_detail' product.id %}" class="btn btn-primary mt-auto">
+                            <i class="bi bi-eye"></i> Ver Detalles
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Paginación mejorada -->
+    <nav aria-label="Paginación de Pokémon" class="mt-5">
+        <div class="d-flex justify-content-center align-items-center">
+            {% if has_previous %}
+                <a href="?page={{ previous_page }}" class="btn btn-outline-primary me-3">
+                    <i class="bi bi-chevron-left"></i> Anterior
+                </a>
+            {% endif %}
+            
+            <div class="btn-group mx-3" role="group">
+                {% if current_page > 2 %}
+                    <a href="?page=1" class="btn btn-outline-secondary">1</a>
+                    {% if current_page > 3 %}
+                        <span class="btn btn-outline-secondary disabled">...</span>
+                    {% endif %}
+                {% endif %}
+                
+                {% if has_previous %}
+                    <a href="?page={{ previous_page }}" class="btn btn-outline-secondary">{{ previous_page }}</a>
+                {% endif %}
+                
+                <span class="btn btn-primary">{{ current_page }}</span>
+                
+                {% if has_next %}
+                    <a href="?page={{ next_page }}" class="btn btn-outline-secondary">{{ next_page }}</a>
+                {% endif %}
+                
+                {% if current_page < 64 %}
+                    {% if current_page < 63 %}
+                        <span class="btn btn-outline-secondary disabled">...</span>
+                    {% endif %}
+                    <a href="?page=66" class="btn btn-outline-secondary">66</a>
+                {% endif %}
+            </div>
+            
+            {% if has_next %}
+                <a href="?page={{ next_page }}" class="btn btn-outline-primary ms-3">
+                    Siguiente <i class="bi bi-chevron-right"></i>
+                </a>
+            {% endif %}
+        </div>
+        
+        <div class="text-center mt-3">
+            <small class="text-muted">
+                Página {{ current_page }} de 66 ({{ products|length }} Pokémon en esta página)
+            </small>
+        </div>
+    </nav>
+</div>
+{% endblock %}
