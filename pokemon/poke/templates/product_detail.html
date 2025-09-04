@@ -3,21 +3,101 @@
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8 text-center">
-            <h1 class="mb-4">Detalles de <span class="text-capitalize">{{ product.title }}</span></h1>
-            
-            <div class="card">
-                <div class="card-body">
-                    <img src="{{ product.image }}" alt="{{ product.title }}" class="img-fluid mb-3" style="max-width: 300px;">
-                    <h2 class="text-capitalize mb-3">{{ product.title }}</h2>
-                    <p class="h5"><strong>ID:</strong> {{ product.id }}</p>
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h1 class="mb-0">
+                        <i class="bi bi-star"></i> 
+                        <span class="text-capitalize">{{ product.title }}</span>
+                    </h1>
                 </div>
-            </div>
-            
-            <div class="mt-4">
-                <a href="{% url 'products' %}" class="btn btn-secondary btn-lg">Volver a la Lista</a>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Imagen -->
+                        <div class="col-md-6 text-center">
+                            <img 
+                                src="{{ product.image }}" 
+                                alt="{{ product.title }}" 
+                                class="img-fluid rounded shadow"
+                                style="max-width: 300px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 20px;"
+                                onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'"
+                            >
+                        </div>
+                        
+                        <!-- Detalles -->
+                        <div class="col-md-6">
+                            <div class="pokemon-details">
+                                <h2 class="text-capitalize mb-3 text-primary">{{ product.title }}</h2>
+                                
+                                <div class="detail-item mb-3">
+                                    <strong><i class="bi bi-hash text-muted"></i> ID:</strong>
+                                    <span class="badge bg-secondary">#{{ product.id|stringformat:"04d" }}</span>
+                                </div>
+                                
+                                <div class="detail-item mb-4">
+                                    <strong><i class="bi bi-card-text text-info"></i> Descripción:</strong>
+                                    <p class="text-muted mt-2">
+                                        {% if product.description %}
+                                            {{ product.description }}
+                                        {% else %}
+                                            <em>Sin descripción disponible</em>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Botones de acción -->
+                <div class="card-footer bg-light">
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <a href="{% url 'products' %}" class="btn btn-secondary w-100">
+                                <i class="bi bi-arrow-left"></i> Volver a la Lista
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{% url 'pokemon_update' product.id %}" class="btn btn-warning w-100">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{% url 'pokemon_delete' product.id %}" class="btn btn-danger w-100">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .detail-item {
+        border-left: 3px solid #0d6efd;
+        padding-left: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .pokemon-details {
+        padding: 20px 0;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        border-radius: 0;
+        padding: 20px;
+    }
+    
+    .badge {
+        font-size: 1rem;
+    }
+</style>
 {% endblock %}

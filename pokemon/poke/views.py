@@ -1,6 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
+from django.contrib import messages
+from django.urls import reverse
 from .models import Product
+from .forms import ProductForm
 
 def products(request):
     print("=== DEBUGGING ===")
@@ -39,3 +42,65 @@ def products(request):
 def product_details(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     return render(request, 'product_detail.html', {'product': product})
+
+def product_create(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            try:
+                product = form.save(commit=False)
+                # Asignar valores por defecto para campos requeridos no incluidos
+                product.price = 0.00
+                product.image = ''
+                product.save()
+                messages.success(request, f'¡Pokémon "{product.title}" creado exitosamente!')
+                return redirect('pokemon_detail', product_id=product.id)
+            except Exception as e:
+                messages.error(request, f'Error al crear: {str(e)}')
+        else:
+            messages.error(request, 'Por favor corrige los errores en el formulario.')
+    else:
+        form = ProductForm()
+    
+    return render(request, 'product_form.html', {
+        'form': form,
+        'title': 'Crear Nuevo Pokémon',
+        'submit_text': 'Crear Pokémon'
+    })
+
+def product_update(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    
+    if request.method == 'POST':
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            try:
+                updated_product = form.save()
+                messages.success(request, f'¡Pokémon "{updated_product.title}" actualizado exitosamente!')
+                return redirect('pokemon_detail', product_id=updated_product.id)
+            except Exception as e:
+                messages.error(request, f'Error al actualizar: {str(e)}')
+        else:
+            messages.error(request, 'Por favor corrige los errores en el formulario.')
+            # Debug: imprimir errores en consola
+            print("Errores del formulario:", form.errors)
+    else:
+        form = ProductForm(instance=product)
+    
+    return render(request, 'product_form.html', {
+        'form': form,
+        'product': product,
+        'title': f'Editar {product.title}',
+        'submit_text': 'Actualizar Pokémon'
+    })
+
+def product_delete(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    
+    if request.method == 'POST':
+        product_name = product.title
+        product.delete()
+        messages.success(request, f'¡Pokémon "{product_name}" eliminado exitosamente!')
+        return redirect('products')
+    
+    return render(request, 'product_confirm_delete.html', {'product': product})

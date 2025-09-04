@@ -2,8 +2,17 @@
 
 {% block content %}
 <div class="container-fluid">
-    <h1 class="text-center mb-4">Lista de Pokémon</h1>
-    <p class="text-center text-muted">Página {{ current_page }} - Mostrando {{ products|length }} de 1302 Pokémon</p>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="text-center mb-2">Lista de Pokémon</h1>
+            <p class="text-center text-muted">Página {{ current_page }} - Mostrando {{ products|length }} de 1302+ Pokémon</p>
+        </div>
+        <div>
+            <a href="{% url 'pokemon_create' %}" class="btn btn-success btn-lg">
+                <i class="bi bi-plus-circle"></i> Nuevo Pokémon
+            </a>
+        </div>
+    </div>
     
     <!-- Grid de tarjetas -->
     <div class="row">
@@ -19,63 +28,90 @@
                     >
                     <div class="card-body text-center d-flex flex-column">
                         <h5 class="card-title text-capitalize fw-bold text-primary">{{ product.title }}</h5>
-                        <p class="card-text text-muted mb-2">ID: #{{ product.id|stringformat:"04d" }}</p>
-                        <a href="{% url 'pokemon_detail' product.id %}" class="btn btn-primary mt-auto">
-                            <i class="bi bi-eye"></i> Ver Detalles
-                        </a>
+                        <p class="card-text text-muted mb-3">ID: #{{ product.id|stringformat:"04d" }}</p>
+                        
+                        <!-- Botones de acción -->
+                        <div class="mt-auto">
+                            <div class="btn-group-vertical w-100 gap-2">
+                                <a href="{% url 'pokemon_detail' product.id %}" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-eye"></i> Ver Detalles
+                                </a>
+                                <div class="btn-group w-100" role="group">
+                                    <a href="{% url 'pokemon_update' product.id %}" class="btn btn-outline-warning btn-sm">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </a>
+                                    <a href="{% url 'pokemon_delete' product.id %}" class="btn btn-outline-danger btn-sm">
+                                        <i class="bi bi-trash"></i> Eliminar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="bi bi-info-circle"></i>
+                    <h4>No hay Pokémon registrados</h4>
+                    <p>¡Comienza agregando tu primer Pokémon!</p>
+                    <a href="{% url 'pokemon_create' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Crear Nuevo Pokémon
+                    </a>
                 </div>
             </div>
         {% endfor %}
     </div>
     
     <!-- Paginación mejorada -->
-    <nav aria-label="Paginación de Pokémon" class="mt-5">
-        <div class="d-flex justify-content-center align-items-center">
-            {% if has_previous %}
-                <a href="?page={{ previous_page }}" class="btn btn-outline-primary me-3">
-                    <i class="bi bi-chevron-left"></i> Anterior
-                </a>
-            {% endif %}
-            
-            <div class="btn-group mx-3" role="group">
-                {% if current_page > 2 %}
-                    <a href="?page=1" class="btn btn-outline-secondary">1</a>
-                    {% if current_page > 3 %}
-                        <span class="btn btn-outline-secondary disabled">...</span>
-                    {% endif %}
-                {% endif %}
-                
+    {% if products %}
+        <nav aria-label="Paginación de Pokémon" class="mt-5">
+            <div class="d-flex justify-content-center align-items-center">
                 {% if has_previous %}
-                    <a href="?page={{ previous_page }}" class="btn btn-outline-secondary">{{ previous_page }}</a>
+                    <a href="?page={{ previous_page }}" class="btn btn-outline-primary me-3">
+                        <i class="bi bi-chevron-left"></i> Anterior
+                    </a>
                 {% endif %}
                 
-                <span class="btn btn-primary">{{ current_page }}</span>
+                <div class="btn-group mx-3" role="group">
+                    {% if current_page > 2 %}
+                        <a href="?page=1" class="btn btn-outline-secondary">1</a>
+                        {% if current_page > 3 %}
+                            <span class="btn btn-outline-secondary disabled">...</span>
+                        {% endif %}
+                    {% endif %}
+                    
+                    {% if has_previous %}
+                        <a href="?page={{ previous_page }}" class="btn btn-outline-secondary">{{ previous_page }}</a>
+                    {% endif %}
+                    
+                    <span class="btn btn-primary">{{ current_page }}</span>
+                    
+                    {% if has_next %}
+                        <a href="?page={{ next_page }}" class="btn btn-outline-secondary">{{ next_page }}</a>
+                    {% endif %}
+                    
+                    {% if current_page < 64 %}
+                        {% if current_page < 63 %}
+                            <span class="btn btn-outline-secondary disabled">...</span>
+                        {% endif %}
+                        <a href="?page=66" class="btn btn-outline-secondary">66</a>
+                    {% endif %}
+                </div>
                 
                 {% if has_next %}
-                    <a href="?page={{ next_page }}" class="btn btn-outline-secondary">{{ next_page }}</a>
-                {% endif %}
-                
-                {% if current_page < 64 %}
-                    {% if current_page < 63 %}
-                        <span class="btn btn-outline-secondary disabled">...</span>
-                    {% endif %}
-                    <a href="?page=66" class="btn btn-outline-secondary">66</a>
+                    <a href="?page={{ next_page }}" class="btn btn-outline-primary ms-3">
+                        Siguiente <i class="bi bi-chevron-right"></i>
+                    </a>
                 {% endif %}
             </div>
             
-            {% if has_next %}
-                <a href="?page={{ next_page }}" class="btn btn-outline-primary ms-3">
-                    Siguiente <i class="bi bi-chevron-right"></i>
-                </a>
-            {% endif %}
-        </div>
-        
-        <div class="text-center mt-3">
-            <small class="text-muted">
-                Página {{ current_page }} de 66 ({{ products|length }} Pokémon en esta página)
-            </small>
-        </div>
-    </nav>
+            <div class="text-center mt-3">
+                <small class="text-muted">
+                    Página {{ current_page }} de 66+ ({{ products|length }} Pokémon en esta página)
+                </small>
+            </div>
+        </nav>
+    {% endif %}
 </div>
 {% endblock %}
